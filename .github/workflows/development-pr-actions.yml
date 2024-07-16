@@ -1,0 +1,52 @@
+name: Development-PR-Actions
+
+on:
+  # Triggers the workflow on pull request events but only for the development branch
+  pull_request:
+    branches: [ development ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # 1. Super-Linter: a code analysis tool used to flag programming errors, 
+  # bugs, stylistic errors and suspicious constructs
+  super-lint:
+    name: Lint code base
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+      # The checkout step
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v4
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: $({secrets.GITHUB_TOKEN})
+
+  # 2. British English spell check on Markdowns, Python sources files, etc
+  build:
+    name: Spellcheck
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+    # The checkout step
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Spellcheck
+        uses: rojopolis/spellcheck-github-actions@v0
+        with:
+          config_path: .spellcheck.yml
+          task_name: Markdown
+      
+    # The checkout step
+      - name: Spellcheck
+        uses: rojopolis/spellcheck-github-actions@v0
+        
