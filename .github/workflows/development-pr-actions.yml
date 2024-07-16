@@ -41,7 +41,6 @@ jobs:
         uses: rojopolis/spellcheck-github-actions@v0
         with:
           config_path: .spellcheck.yml
-          task_name: Markdown Python html text javascript
       
     # The checkout step
       - name: Spellcheck
