@@ -6,7 +6,7 @@ matrix:
 # Note: Each task requires, at the very least, a name and sources to search.
 
 # Task to spellcheck all markdown files using British English.
-  - name: Markdowns
+  - name: Markdown
     sources: '**/*.md'
 
     # Suppress the error that would otherwise be raised if no spelling error is found
@@ -40,7 +40,7 @@ matrix:
   
 
   # The Python filter is designed to find and return only content from comments and/or strings.
-  - name: Python Source
+  - name: Python
     sources:
     - '**/*.py'
     aspell:

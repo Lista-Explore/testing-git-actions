@@ -31,10 +31,7 @@ jobs:
   # 2. British English spell check on Markdowns, Python sources files, etc
   build:
     name: Spellcheck
-    runs-on: ${{matrix.os}}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+    runs-on: ubuntu-latest
     steps:
     # The checkout step
       - name: Checkout code
@@ -44,7 +41,6 @@ jobs:
         uses: rojopolis/spellcheck-github-actions@v0
         with:
           config_path: .spellcheck.yml
-          task_name: Markdown
       
     # The checkout step
       - name: Spellcheck
