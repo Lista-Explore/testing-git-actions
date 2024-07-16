@@ -117,13 +117,13 @@ matrix:
   # The XML filter is designed to capture XML content, comments, and even attributes. 
     - name: xml
       # Suppress the error that would otherwise be raised if no spelling error is found
-    expect_match: false
-    pipeline:
-    - pyspelling.filters.xml:
-        comments: false
-        attributes:
-        - some-data
-        ignores:
-        - :matches(ignore_tag, [ignore_attribute])
-    sources:
-    - '**/*.xml'
+      expect_match: false
+      pipeline:
+      - pyspelling.filters.xml:
+          comments: false
+          attributes:
+          - some-data
+          ignores:
+          - :matches(ignore_tag, [ignore_attribute])
+      sources:
+      - '**/*.xml'
