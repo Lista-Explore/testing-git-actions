@@ -6,6 +6,11 @@ on:
     branches: [ development ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  # Triggers the workflow on branch deletion events for master and development branches
+  delete:
+    branches:
+      - main
+      - development
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -26,14 +31,14 @@ jobs:
         uses: github/super-linter@v4
         env:
           DEFAULT_BRANCH: master
-          GITHUB_TOKEN: $({secrets.GITHUB_TOKEN})
+          GITHUB_TOKEN: $({{secrets.GITHUB_TOKEN}})
 
   # 2. British English spell check on Markdowns, Python sources files, etc
   build:
     name: Spellcheck
     runs-on: ubuntu-latest
     steps:
-    # The checkout step
+      # The checkout step
       - name: Checkout code
         uses: actions/checkout@v3
         
@@ -41,8 +46,19 @@ jobs:
         uses: rojopolis/spellcheck-github-actions@v0
         with:
           config_path: .spellcheck.yml
-      
-    # The checkout step
-      - name: Spellcheck
-        uses: rojopolis/spellcheck-github-actions@v0
-        
+
+  # 3. Prevent deletion of master and development branches
+  prevent-deletion:
+    if: github.event_name == 'delete'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if master branch is being deleted
+        if: github.event.ref == 'refs/heads/main'
+        run: |
+          echo "Deletion of the master branch is not allowed."
+          exit 1
+      - name: Check if development branch is being deleted
+        if: github.event.ref == 'refs/heads/development'
+        run: |
+          echo "Deletion of the development branch is not allowed."
+          exit 1
