@@ -18,13 +18,14 @@ jobs:
     if: ${{ github.event_name == 'delete' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Check if master branch is being deleted
-        if: github.event.ref == 'refs/heads/master'
+      - name: Prevent deletion of master branch
+        if: github.event.deleted == true && github.ref == 'refs/heads/master'
         run: |
           echo "Deletion of the master branch is not allowed."
           exit 1
-      - name: Check if development branch is being deleted
-        if: github.event.ref == 'refs/heads/development'
+
+      - name: Prevent deletion of development branch
+        if: github.event.deleted == true && github.ref == 'refs/heads/development'
         run: |
           echo "Deletion of the development branch is not allowed."
           exit 1
