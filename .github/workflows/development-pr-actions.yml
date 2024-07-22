@@ -13,22 +13,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  # 1. Protect branches from deletion
-  protect-branches:
-    if: ${{ github.event_name == 'delete' }}
+  # 1. 
+  check-branch-name:
     runs-on: ubuntu-latest
-    steps:
-      - name: Prevent deletion of master branch
-        if: github.event.deleted == true && github.ref == 'refs/heads/master'
-        run: |
-          echo "Deletion of the master branch is not allowed."
-          exit 1
 
-      - name: Prevent deletion of development branch
-        if: github.event.deleted == true && github.ref == 'refs/heads/development'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check branch name
         run: |
-          echo "Deletion of the development branch is not allowed."
-          exit 1
+          BRANCH_NAME=$(echo ${{ github.head_ref }})
+          if [[ ! "$BRANCH_NAME" =~ ^release-Y ]]; then
+            echo "Branch name $BRANCH_NAME is not allowed to merge into master. Only branches with the prefix 'release-Y' are allowed."
+            echo "Example `release-Y24-15.0.7` for the 7th release in sprint 15, year 2024."
+            exit 1
+          fi
+      - name: Allow merge
+        run: echo "Branch name $BRANCH_NAME is allowed to merge into master."
 
   # 2. Super-Linter: a code analysis tool used to flag programming errors,
   # bugs, stylistic errors and suspicious constructs
