@@ -3,11 +3,11 @@ name: Development-PR-Actions
 on:
   # Triggers the workflow on pull request events but only for the development branch
   pull_request:
-    branches: [ development ]
+    branches: [ development, main ]
   # Triggers the workflow on branch deletion for master and development branches
   delete:
     branches:
-      - master
+      - main
       - development
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,14 +23,15 @@ jobs:
 
       - name: Check branch name
         run: |
-          BRANCH_NAME=$(echo ${{ github.head_ref }})
-          if [[ ! "$BRANCH_NAME" =~ ^release-Y ]]; then
-            echo "Branch name $BRANCH_NAME is not allowed to merge into master. Only branches with the prefix 'release-Y' are allowed."
-            echo "Example `release-Y24-15.0.7` for the 7th release in sprint 15, year 2024."
-            exit 1
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ ${{ github.event_name }} == 'pull_request' && ${{ github.base_ref }} == 'main' ]]; then
+            if [[ ! "$BRANCH_NAME" =~ ^release ]]; then
+              echo "Branch name $BRANCH_NAME is not allowed to merge into main. Only branches with the prefix 'release' are allowed."
+              exit 1
+            else
+              echo "Branch name $BRANCH_NAME is allowed to merge into main."
+            fi
           fi
-      - name: Allow merge
-        run: echo "Branch name $BRANCH_NAME is allowed to merge into master."
 
   # 2. Super-Linter: a code analysis tool used to flag programming errors,
   # bugs, stylistic errors and suspicious constructs
